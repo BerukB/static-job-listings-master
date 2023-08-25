@@ -1,6 +1,6 @@
 /** @type {import('tailwindcss').Config} */
 module.exports = {
-  content: ["./*.{html,js}"],
+  content: ["./*.html", "./script/**/*.js"],
   theme: {
     screens: {
       sm: "375px",
@@ -21,15 +21,15 @@ module.exports = {
         veryDarkGrayishCyan: "hsl(180, 14%, 20%)",
       },
       fontFamily: {
-        leagueSpartan: ['League Spartan', 'sans-serif'],
+        leagueSpartan: ["League Spartan", "sans-serif"],
       },
       fontWeight: {
         regular: "500",
         bold: "700",
       },
       fontSize: {
-        newSize: ['14px'],
-      }
+        newSize: ["14px"],
+      },
     },
   },
   plugins: [],
