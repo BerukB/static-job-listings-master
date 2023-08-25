@@ -233,7 +233,7 @@ export function initialJobCreator() {
       console.log(data);
 
       const listJobs = document.getElementById("list-jobs");
-
+      listJobs.innerHTML = "";
       data.sort((a, b) => b.featured - a.featured);
 
       data.forEach((job) => {
@@ -326,11 +326,13 @@ export function filterBoxManager() {
         }
 
         if (filterTags.length === 0) {
+            console.log("one")
           const filterCase = document.getElementById("filter-case");
           filterCase.classList.remove("flex");
           filterCase.classList.add("hidden");
           initialJobCreator();
         } else {
+            console.log("two")
           filterJobs(filterTags);
         }
       }
