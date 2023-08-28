@@ -112,18 +112,19 @@ export function createJobCard(job) {
   jobHeading.textContent = job.position;
   jobTitle.appendChild(jobHeading);
 
-  const jobInfo = document.createElement("div");
-  jobInfo.classList.add("text-darkGrayishCyan");
+  const jobInfo = document.createElement("ul");
+  jobInfo.classList.add("text-darkGrayishCyan", "flex","list-disc", "list-inside", "space-x-2");
 
-  const postedAt = document.createElement("span");
+  const postedAt = document.createElement("li");
+  postedAt.classList.add("list-none");
   postedAt.textContent = job.postedAt;
   jobInfo.appendChild(postedAt);
 
-  const contract = document.createElement("span");
+  const contract = document.createElement("li");
   contract.textContent = job.contract;
   jobInfo.appendChild(contract);
 
-  const location = document.createElement("span");
+  const location = document.createElement("li");
   location.textContent = job.location;
   jobInfo.appendChild(location);
 
@@ -140,11 +141,10 @@ export function createJobCard(job) {
   buttonContainer.id = "button-container";
   buttonContainer.classList.add(
     "flex",
-    "space-x-4",
+    // "space-x-4",
     "flex-wrap",
-    "pr-24",
-    "md:pr-0",
     "md:flex-nowrap",
+    "md:justify-end",
     "md:items-center"
   );
 
@@ -153,6 +153,8 @@ export function createJobCard(job) {
   roleButton.id = "filter-button";
   roleButton.classList.add(
     "p-2",
+    "mr-4",
+    "mb-3",
     "filter-button",
     "bg-lightGrayishCyanBg",
     "text-desaturatedDarkCyan",
@@ -171,6 +173,8 @@ export function createJobCard(job) {
     toolButton.id = "filter-button";
     toolButton.classList.add(
       "p-2",
+      "mr-4",
+      "mb-3",
       "filter-button",
       "bg-lightGrayishCyanBg",
       "text-desaturatedDarkCyan",
@@ -189,6 +193,8 @@ export function createJobCard(job) {
   levelButton.id = "filter-button";
   levelButton.classList.add(
     "p-2",
+    "mr-4",
+    "mb-3",
     "filter-button",
     "bg-lightGrayishCyanBg",
     "text-desaturatedDarkCyan",
@@ -207,6 +213,8 @@ export function createJobCard(job) {
     languageButton.id = "filter-button";
     languageButton.classList.add(
       "p-2",
+      "mr-4",
+      "mb-3",
       "filter-button",
       "bg-lightGrayishCyanBg",
       "text-desaturatedDarkCyan",
@@ -269,10 +277,10 @@ export function filterBoxManager() {
 
           // Create a new div element for the filter tag
           const filterTag = document.createElement("div");
-          filterTag.classList.add("flex");
+          filterTag.classList.add("flex","mr-4","mb-3");
 
           // Create a new a element for the filter label
-          const filterLabel = document.createElement("button");
+          const filterLabel = document.createElement("span");
           filterLabel.classList.add(
             "py-1",
             "px-2",
@@ -326,13 +334,13 @@ export function filterBoxManager() {
         }
 
         if (filterTags.length === 0) {
-            console.log("one")
+          console.log("one");
           const filterCase = document.getElementById("filter-case");
           filterCase.classList.remove("flex");
           filterCase.classList.add("hidden");
           initialJobCreator();
         } else {
-            console.log("two")
+          console.log("two");
           filterJobs(filterTags);
         }
       }
