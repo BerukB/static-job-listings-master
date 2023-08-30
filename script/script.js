@@ -1,5 +1,11 @@
-import {filterBoxManager,initialJobCreator} from "./functions.js";
+import {filterBoxManager,initialJobCreator,mainData} from "./functions.js";
 
-initialJobCreator();
-filterBoxManager();
 
+mainData()
+  .then((jobsMain) => {
+    initialJobCreator(jobsMain);
+    filterBoxManager(jobsMain);
+  })
+  .catch((error) => {
+    console.error("Error fetching job data:", error);
+  });

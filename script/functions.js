@@ -113,7 +113,13 @@ export function createJobCard(job) {
   jobTitle.appendChild(jobHeading);
 
   const jobInfo = document.createElement("ul");
-  jobInfo.classList.add("text-darkGrayishCyan", "flex","list-disc", "list-inside", "space-x-2");
+  jobInfo.classList.add(
+    "text-darkGrayishCyan",
+    "flex",
+    "list-disc",
+    "list-inside",
+    "space-x-2"
+  );
 
   const postedAt = document.createElement("li");
   postedAt.classList.add("list-none");
@@ -234,151 +240,152 @@ export function createJobCard(job) {
   return divider;
 }
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-export function initialJobCreator() {
-  fetch("data.json")
-    .then((response) => response.json())
+
+export function mainData() {
+  return axios
+    .get("https://my.api.mockaroo.com/job_list.json?key=0635cb40")
+    .then((response) => response.data)
     .then((data) => {
-      console.log(data);
-
-      const listJobs = document.getElementById("list-jobs");
-      listJobs.innerHTML = "";
-      data.sort((a, b) => b.featured - a.featured);
-
-      data.forEach((job) => {
-        const jobCard = createJobCard(job);
-        listJobs.appendChild(jobCard);
+      data.sort((a, b) => {
+        if (a.featured && !b.featured) {
+          return -1;
+        } else if (!a.featured && b.featured) {
+          return 1; 
+        } else if (a.new && !b.new) {
+          return -1; 
+        } else if (!a.new && b.new) {
+          return 1; 
+        } else {
+          return 0; 
+        }
       });
+      return data;
     });
+}
+
+export function initialJobCreator(jobs) {
+  const listJobs = document.getElementById("list-jobs");
+  listJobs.innerHTML = "";
+
+  jobs.forEach((job) => {
+    const jobCard = createJobCard(job);
+    listJobs.appendChild(jobCard);
+  });
 }
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-export function filterBoxManager() {
-  document.addEventListener("DOMContentLoaded", () => {
-    console.log("DOMContentLoaded event fired");
+export function filterBoxManager(jobsMain) {
 
-    const listJobs = document.getElementById("list-jobs");
-    const filterTags = [];
+  const listJobs = document.getElementById("list-jobs");
+  const filterTags = [];
+  const mainJobs = jobsMain;
 
-    listJobs.addEventListener("click", (event) => {
-      if (event.target.matches("#list-jobs button")) {
-        console.log("Button clicked");
-        const buttonText = event.target.textContent;
-        console.log(filterTags);
+  listJobs.addEventListener("click", (event) => {
+    if (event.target.matches("#list-jobs button")) {
+      const buttonText = event.target.textContent;
 
-        if (!filterTags.includes(buttonText)) {
-          filterTags.push(buttonText);
+      if (!filterTags.includes(buttonText)) {
+        filterTags.push(buttonText);
 
-          // Get the filter case element
-          const filterCase = document.getElementById("filter-case");
-          filterCase.classList.remove("hidden");
-          filterCase.classList.add("flex");
+        // Get the filter case element
+        const filterCase = document.getElementById("filter-case");
+        filterCase.classList.remove("hidden");
+        filterCase.classList.add("flex");
 
-          const filterBox = document.getElementById("filter-box");
+        const filterBox = document.getElementById("filter-box");
 
-          // Create a new div element for the filter tag
-          const filterTag = document.createElement("div");
-          filterTag.classList.add("flex","mr-4","mb-3");
+        // Create a new div element for the filter tag
+        const filterTag = document.createElement("div");
+        filterTag.classList.add("flex", "mr-4", "mb-3");
 
-          // Create a new a element for the filter label
-          const filterLabel = document.createElement("span");
-          filterLabel.classList.add(
-            "py-1",
-            "px-2",
-            "bg-lightGrayishCyanBg",
-            "text-desaturatedDarkCyan",
-            "rounded-l-md",
-            "font-bold"
-          );
-          filterLabel.textContent = event.target.textContent;
+        // Create a new a element for the filter label
+        const filterLabel = document.createElement("span");
+        filterLabel.classList.add(
+          "py-1",
+          "px-2",
+          "bg-lightGrayishCyanBg",
+          "text-desaturatedDarkCyan",
+          "rounded-l-md",
+          "font-bold"
+        );
+        filterLabel.textContent = event.target.textContent;
 
-          // Create a new img element for the remove icon
-          const removeIcon = document.createElement("img");
-          removeIcon.src = "images/icon-remove.svg";
-          removeIcon.classList.add(
-            "bg-desaturatedDarkCyan",
-            "hover:bg-veryDarkGrayishCyan",
-            "object-contain",
-            "rounded-r-md",
-            "px-2",
-            "cursor-pointer"
-          );
-          removeIcon.alt = "";
+        // Create a new img element for the remove icon
+        const removeIcon = document.createElement("img");
+        removeIcon.src = "images/icon-remove.svg";
+        removeIcon.classList.add(
+          "bg-desaturatedDarkCyan",
+          "hover:bg-veryDarkGrayishCyan",
+          "object-contain",
+          "rounded-r-md",
+          "px-2",
+          "cursor-pointer"
+        );
+        removeIcon.alt = "";
 
-          // Append the filter label and remove icon to the filter tag
-          filterTag.appendChild(filterLabel);
-          filterTag.appendChild(removeIcon);
+        // Append the filter label and remove icon to the filter tag
+        filterTag.appendChild(filterLabel);
+        filterTag.appendChild(removeIcon);
 
-          // Append the filter tag to the filter box
-          filterBox.appendChild(filterTag);
+        // Append the filter tag to the filter box
+        filterBox.appendChild(filterTag);
 
-          filterJobs(filterTags);
-        }
+        filterJobs(filterTags, mainJobs);
       }
-    });
-    // start of removal of filter elements
-
-    const listTags = document.getElementById("filter-box");
-
-    listTags.addEventListener("click", (event) => {
-      if (event.target.matches("#filter-box img")) {
-        // Remove the filter tag from the filter box
-
-        const buttonText = event.target.previousSibling.textContent.trim();
-
-        event.target.parentElement.remove();
-
-        // Remove the corresponding name from the filterTags array
-        const index = filterTags.indexOf(buttonText);
-        if (index !== -1) {
-          filterTags.splice(index, 1);
-        }
-
-        if (filterTags.length === 0) {
-          console.log("one");
-          const filterCase = document.getElementById("filter-case");
-          filterCase.classList.remove("flex");
-          filterCase.classList.add("hidden");
-          initialJobCreator();
-        } else {
-          console.log("two");
-          filterJobs(filterTags);
-        }
-      }
-    });
-
-    // use of the clear Button
-    const clear = document.getElementById("clear");
-    clear.addEventListener("click", () => {
-      const filterBox = document.getElementById("filter-box");
-      filterBox.innerHTML = "";
-      const listJobs = document.getElementById("list-jobs");
-      listJobs.innerHTML = "";
-      const filterCase = document.getElementById("filter-case");
-      filterCase.classList.remove("flex");
-      filterCase.classList.add("hidden");
-      filterTags.length = 0;
-
-      initialJobCreator();
-    });
+    }
   });
 
-  function filterJobs(filterTags) {
-    console.log(filterTags);
-    // Fetch the job data from the data.json file
-    fetch("data.json")
-      .then((response) => response.json())
-      .then((jobs) => {
-        const filteredJobs = jobs.filter((job) => {
-          const mergedProperties = keyMerge(job);
-          return filterTags.every((items) => mergedProperties.includes(items));
-        });
+  // start of removal of filter elements
+  const listTags = document.getElementById("filter-box");
 
-        // Display the filtered jobs
-        displayJobs(filteredJobs);
-      })
-      .catch((error) => {
-        console.error("Error fetching job data:", error);
-      });
+  listTags.addEventListener("click", (event) => {
+    if (event.target.matches("#filter-box img")) {
+      
+      // Remove the filter tag from the filter box
+      const buttonText = event.target.previousSibling.textContent.trim();
+
+      event.target.parentElement.remove();
+
+      // Remove the corresponding name from the filterTags array
+      const index = filterTags.indexOf(buttonText);
+      if (index !== -1) {
+        filterTags.splice(index, 1);
+      }
+
+      if (filterTags.length === 0) {
+        const filterCase = document.getElementById("filter-case");
+        filterCase.classList.remove("flex");
+        filterCase.classList.add("hidden");
+        initialJobCreator(mainJobs);
+      } else {
+        filterJobs(filterTags, mainJobs);
+      }
+    }
+  });
+
+  // use of the clear Button
+  const clear = document.getElementById("clear");
+  clear.addEventListener("click", () => {
+    const filterBox = document.getElementById("filter-box");
+    filterBox.innerHTML = "";
+    const listJobs = document.getElementById("list-jobs");
+    listJobs.innerHTML = "";
+    const filterCase = document.getElementById("filter-case");
+    filterCase.classList.remove("flex");
+    filterCase.classList.add("hidden");
+    filterTags.length = 0;
+
+    initialJobCreator(mainJobs);
+  });
+
+  function filterJobs(filterTags, mainJobs) {
+    const filteredJobs = mainJobs.filter((job) => {
+      const mergedProperties = keyMerge(job);
+      return filterTags.every((items) => mergedProperties.includes(items));
+    });
+
+    // Display the filtered jobs
+    displayJobs(filteredJobs);
   }
 
   function displayJobs(jobs) {
